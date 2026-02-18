@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #060010;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* HERO */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 300;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #ff0066, #ffd700, #ff0066);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: shine 6s infinite linear;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 300% center;
+            }
+        }
+
+        .hero p {
+            margin-top: 20px;
+            opacity: .7;
+            font-size: clamp(16px, 2vw, 22px);
+            max-width: 700px;
+        }
+
+        /* TIMELINE */
+        .memory {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: 1.2s ease;
+        }
+
+        .memory.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Background image */
+        .memory img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(.35);
+            transform: scale(1.2);
+            transition: transform 8s ease;
+        }
+
+        .memory.visible img {
+            transform: scale(1);
+        }
+
+        /* Dark gradient overlay */
+        .memory::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, .7), rgba(0, 0, 0, .3), rgba(0, 0, 0, .8));
+        }
+
+        /* Caption */
+        .caption {
+            position: relative;
+            text-align: center;
+            padding: 30px;
+            max-width: 900px;
+            backdrop-filter: blur(6px);
+        }
+
+        .caption h2 {
+            font-size: clamp(28px, 5vw, 52px);
+            margin-bottom: 20px;
+        }
+
+        .caption p {
+            font-size: clamp(16px, 2vw, 22px);
+            line-height: 1.6;
+            min-height: 80px;
+        }
+
+        /* Glow divider */
+        .divider {
+            height: 100px;
+            background: radial-gradient(circle, rgba(255, 0, 120, .5), transparent 70%);
+        }
+
+        /* Love rain */
+        .love {
+            position: fixed;
+            top: -50px;
+            font-size: 22px;
+            animation: fall linear forwards;
+            z-index: 0;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh);
+                opacity: 0;
+            }
+        }
+
+        /* Fireworks */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hero">
+        <h1>Our Love Story</h1>
+        <p>Scroll slowly… feel every chapter, my Vquarius 💖</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MEMORY 1 -->
+    <section class="memory">
+        <img src="images/memory1.jpg">
+        <div class="caption">
+            <h2>The First Spark ✨</h2>
+            <p data-text="The moment we met, something shifted inside me.
+            I didn’t know it yet…
+            but my heart already chose you."></p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- MEMORY 2 -->
+    <section class="memory">
+        <img src="images/memory2.jpg">
+        <div class="caption">
+            <h2>Late Night Talks 🌙</h2>
+            <p data-text="Hours felt like minutes.
+            Your voice became my comfort.
+            Your smile became my peace."></p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- MEMORY 3 -->
+    <section class="memory">
+        <img src="images/memory3.jpg">
+        <div class="caption">
+            <h2>Growing Together 🌸</h2>
+            <p data-text="Through ups and downs,
+            we chose each other.
+            We grew stronger, together."></p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- MEMORY 4 -->
+    <section class="memory">
+        <img src="images/memory4.jpg">
+        <div class="caption">
+            <h2>Forever Begins Here 💍</h2>
+            <p data-text="This is not temporary.
+            This is not casual.
+            This is us, building forever.
+            I love you so much, mama"></p>
+        </div>
+    </section>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+
+        /* Scroll reveal */
+        const memories = document.querySelectorAll(".memory");
+
+        function reveal() {
+            memories.forEach(mem => {
+                if (mem.getBoundingClientRect().top < window.innerHeight - 100) {
+                    mem.classList.add("visible");
+                }
+            });
+        }
+        window.addEventListener("scroll", reveal);
+        reveal();
+
+        /* 📝 Typing Effect */
+        function typeEffect(element) {
+            const text = element.getAttribute("data-text");
+            let i = 0;
+
+            function typing() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i) === "\n" ? "<br>" : text.charAt(i);
+                    i++;
+                    setTimeout(typing, 30);
+                }
+            }
+            typing();
+        }
+
+        const captions = document.querySelectorAll(".caption p");
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    typeEffect(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.6 });
+
+        captions.forEach(c => observer.observe(c));
+
+        /* Love rain */
+        function createLove() {
+            const heart = document.createElement("div");
+            heart.classList.add("love");
+            heart.innerHTML = "❤";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+            heart.style.color = "rgba(255,0,120,0.6)";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 7000);
+        }
+        setInterval(createLove, 250);
+
+        /* Fireworks */
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        let particles = [];
+        function createFirework() {
+            let x = Math.random() * canvas.width;
+            let y = Math.random() * canvas.height * 0.6;
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x, y,
+                    dx: (Math.random() - 0.5) * 6,
+                    dy: (Math.random() - 0.5) * 6,
+                    life: 100
+                });
+            }
+        }
+        setInterval(createFirework, 2000);
+
+        function draw() {
+            ctx.fillStyle = "rgba(0,0,20,0.3)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#ffd700";
+            particles.forEach((p, i) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                p.x += p.dx;
+                p.y += p.dy;
+                p.life--;
+                if (p.life <= 0) particles.splice(i, 1);
+            });
+            requestAnimationFrame(draw);
+        }
+        draw();
+
+    </script>
+
+</body>
+
+</html>
